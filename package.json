@@ -2,8 +2,9 @@
   "name": "c",
   "version": "1.0.0",
   "description": "My second homework for Go-It",
-  "main": "index.js",
+  "main": "gallery-items.js",
   "scripts": {
+    "start": "node galler-items.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
