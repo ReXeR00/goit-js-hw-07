@@ -1,50 +1,67 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-// 
+// console.log(galleryItems);
 
-const listGallery = document.querySelector(`.gallery`);
-const gallery=createGallery(galleryItems)
+const galleryEl = document.querySelector('.gallery');
 
-function createGallery(galleryItems) {
-    return galleryItems.map(({ preview, original, description }) =>{
-   return `<li class="gallery__item">
-  <a class="gallery__link" href="${original}">
-    <img
-      class="gallery__image"
-      src="${preview}"
-      data-source="${original}"
-      alt="${description}"
-    />
-  </a>
-</li>`;
-    }).join(``)
+function createGalleryCardMurkup(gallery) {
+  return gallery
+    .map(({ preview, original, description }) => {
+      return `
+    <div class="gallery__item">
+      <a class="gallery__link" href="${original}">
+        <img
+          class="gallery__image"
+          src="${preview}"
+          data-source="${original}"
+          alt="${description}"
+        />
+      </a>
+    </div>
+    `;
+    })
+    .join('');
 }
 
-// console.log(createGallery(galleryItems))
-listGallery.insertAdjacentHTML(`afterbegin`, gallery)
+const cardsMarcup = createGalleryCardMurkup(galleryItems);
+galleryEl.innerHTML = cardsMarcup;
 
-listGallery.addEventListener(`click`, onPictureClick);
+galleryEl.addEventListener('click', handleImgClick);
 
-function onPictureClick(event) {
+function handleImgClick(event) {
   event.preventDefault();
 
-  if (!event.target.classList.contains(`gallery__image`)) {
-    return
+  if (event.target.nodeName !== 'IMG') {
+    return;
   }
-  // console.log(event.target)
-  const instance = basicLightbox.create(`
-    <img src="${event.target.dataset.source}" width="800" height="600">`,
-    {
-    onShow: (instance) => {window.addEventListener(`keydown`, onModalCloseByEsc)},
-    onClose: (instance) => {     window.removeEventListener(`keydown`, onModalCloseByEsc)}
-  })
-  
-  instance.show()
 
-  function onModalCloseByEsc({ code }) {
-    if (code === `Escape`) {
-      instance.close()
-    }
-  }
+  const openModal = () => {
+    const originalImg = event.target.dataset.source;
+
+    const instance = basicLightbox.create(
+      `
+      <img src="${originalImg}">
+      `,
+      {
+        onShow: (instance) => {
+          window.addEventListener('keydown', openModalbyEsc);
+        },
+
+        onClose: (instance) => {
+          window.removeEventListener('keydown', openModalbyEsc);
+        },
+      }
+    );
+
+    const openModalbyEsc = (event) => {
+      if (event.code === 'Escape') {
+        instance.close();
+      }
+    };
+
+    instance.show();
+  };
+
+  openModal();
 }
